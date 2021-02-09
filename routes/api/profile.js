@@ -3,6 +3,7 @@ const router = express.Router()
 const auth = require('../../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const Profile = require('../../models/Profile')
+const User = require('../../models/User')
 
 // @route   GET api/profile/me
 // @desc    Get current user's profile
@@ -40,7 +41,7 @@ router.post('/', [auth, [
         const profileFields = {}
         profileFields.user = req.user.id
         profileFields.position = position
-        profileFields.skills = (skills.split(',').map(skill => skill.trim())) //change skills from a comma separated string to an array
+        profileFields.skills = skills.split(',').map(skill => skill.trim())
         //check if optional fields were sent from client side and add them to the profileFields object
         if(organization) profileFields.organization = organization
         if(website) profileFields.website = website
@@ -60,7 +61,7 @@ router.post('/', [auth, [
             let profile = await Profile.findOne({user: req.user.id})
             if(profile) {
                 //update profile
-                profile = await Profile.findOneAndUpdate({user: req.user.id}, {$set: profileFields}, {new: true})
+                profile = await Profile.findOneAndUpdate({user: req.user.id}, {$set: profileFields}, {new: true, upsert: true})
                 return res.json(profile)
             }
             else {
@@ -89,7 +90,6 @@ router.get('/', async (req, res) => {
     }
 })
 
-
 // @route   GET api/profile/user/:user_id
 // @desc    Get profile by user ID
 // @access  Public
@@ -102,9 +102,139 @@ router.get('/user/:user_id', async (req, res) => {
         res.json(profile)
     } catch(err) {
         console.error(err.message)
+        if(err.kind === 'ObjectId') {
+            return res.status(400).json({errors: [{msg: "Profile doesn't exist."}]})
+        }
         res.status(500).send("Server error!")
     }
 })
 
+// @route   DELETE api/profile
+// @desc    Delete current user's profile, user and posts
+// @access  Private
+router.delete('/', auth, async (req, res) => {
+    try {
+        // TODO - remove posts
+        //remove profile
+        await Profile.findOneAndRemove({user: req.user.id})
+        //remove user
+        await User.findByIdAndRemove(req.user.id)
+        res.json({msg: "User deleted"})
+    } catch(err) {
+        console.error(err.message)
+        res.status(500).send("Server error!")
+    }
+})
+
+// @route   PUT api/profile/experience
+// @desc    Add profile experience
+// @access  Private
+router.put('/experience', [auth, [
+    check('title', 'Title is required').not().isEmpty(),
+    check('organization', 'Organization is required').not().isEmpty(),
+    check('from', 'From date is required').not().isEmpty()
+]],
+async (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()})
+    }
+
+    const { title, organization, location, from, to, current, description } = req.body
+
+    const newExp = {
+        title: title,
+        organization: organization,
+        location: location,
+        from: from,
+        to: to,
+        current: current,
+        description: description
+    }
+
+    try {
+        const profile = await Profile.findOne({user: req.user.id})
+        profile.experience.unshift(newExp)
+        await profile.save()
+        res.json(profile)
+    } catch(err) {
+        console.error(err.message)
+        res.status(500).send("Server error!")
+    }
+})
+
+// @route   DELETE api/profile/experience/:exp_id
+// @desc    Delete experience
+// @access  Private
+router.delete('/experience/:exp_id', auth, async (req, res) => {
+    try {
+        const profile = await Profile.findOne({user: req.user.id})
+        //remove experience
+        const removeIndex = profile.experience.map(exp => exp.id).indexOf(req.params.exp_id)
+        profile.experience.splice(removeIndex, 1)
+        await profile.save()
+        res.json(profile)
+    } catch(err) {
+        console.error(err.message)
+        res.status(500).send("Server error!")
+    }
+})
+
+
+
+// @route   PUT api/profile/education
+// @desc    Add profile education
+// @access  Private
+router.put('/education', [auth, [
+    check('institution', 'Institution is required').not().isEmpty(),
+    check('degree', 'Degree is required').not().isEmpty(),
+    check('from', 'From date is required').not().isEmpty(),
+    check('fieldOfStudy', 'Field of study is required').not().isEmpty()
+]],
+async (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()})
+    }
+
+    const { institution, degree, fieldOfStudy, from, to, current, description } = req.body
+
+    const newEdu = {
+        institution: institution,
+        degree: degree,
+        fieldOfStudy: fieldOfStudy,
+        from: from,
+        to: to,
+        current: current,
+        description: description
+    }
+
+    try {
+        const profile = await Profile.findOne({user: req.user.id})
+        profile.education.unshift(newEdu)
+        await profile.save()
+        res.json(profile)
+    } catch(err) {
+        console.error(err.message)
+        res.status(500).send("Server error!")
+    }
+})
+
+// @route   DELETE api/profile/education/:edu_id
+// @desc    Delete education
+// @access  Private
+router.delete('/education/:edu_id', auth, async (req, res) => {
+    try {
+        const profile = await Profile.findOne({user: req.user.id})
+        //remove education
+        const removeIndex = profile.education.map(edu => edu.id).indexOf(req.params.edu_id)
+        profile.education.splice(removeIndex, 1)
+        await profile.save()
+        res.json(profile)
+    } catch(err) {
+        console.error(err.message)
+        res.status(500).send("Server error!")
+    }
+})
 
 module.exports = router

@@ -18,7 +18,7 @@ const ProfileSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    skils: {
+    skills: {
         type: [String],
         required: true
     },
@@ -34,7 +34,7 @@ const ProfileSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            company: {
+            organization: {
                 type: String,
                 required: true
             },
@@ -59,7 +59,7 @@ const ProfileSchema = new mongoose.Schema({
     ],
     education: [
         {
-            school: {
+            institution: {
                 type: String,
                 required: true
             },
@@ -67,7 +67,7 @@ const ProfileSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            fieldofstudy: {
+            fieldOfStudy: {
                 type: String,
                 required: true
             },
