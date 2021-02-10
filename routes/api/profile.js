@@ -80,7 +80,7 @@ router.post('/', [auth, [
 )
 
 // @route   GET api/profile
-// @desc    Get all profile
+// @desc    Get all profiles
 // @access  Public
 router.get('/', async (req, res) => {
     try {
@@ -99,13 +99,13 @@ router.get('/user/:user_id', async (req, res) => {
     try {
         const profile = await Profile.findOne({user: req.params.user_id}).populate('user', ['name', 'avatar'])
         if(!profile) {
-            return res.status(400).json({errors: [{msg: "Profile doesn't exist."}]})
+            return res.status(404).json({errors: [{msg: "Profile doesn't exist."}]})
         }
         res.json(profile)
     } catch(err) {
         console.error(err.message)
         if(err.kind === 'ObjectId') {
-            return res.status(400).json({errors: [{msg: "Profile doesn't exist."}]})
+            return res.status(404).json({errors: [{msg: "Profile doesn't exist."}]})
         }
         res.status(500).send("Server error!")
     }
