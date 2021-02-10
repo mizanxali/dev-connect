@@ -8,7 +8,7 @@ const auth = require('../../middleware/auth')
 const User = require('../../models/User')
 
 // @route   GET api/auth
-// @desc    Test route
+// @desc    Get logged in user details (except password)
 // @access  Public
 router.get('/', auth, async (req, res) => {
     try {
@@ -21,7 +21,7 @@ router.get('/', auth, async (req, res) => {
 })
 
 // @route   POST api/auth
-// @desc    Authenticate user and get token
+// @desc    Authenticate user, log them in and get token
 // @access  Public
 router.post('/',
     [
@@ -37,13 +37,13 @@ router.post('/',
     const {email, password} = req.body
 
     try {
-        //check if user exists and return with error code 400 if it does not
+        //check if user already exists, if not continue
         let user = await User.findOne({email: email})
         if(!user) {
-            return res.status(400).json({errors: [{msg: "Invalid credentials."}]})
+            return res.status(400).json({errors: [{msg: "User already exists."}]})
         }
 
-        //match password
+        //match password, if matched continue
         const isMatch = await bcrypt.compare(password, user.password)
         if(!isMatch) {
             return res.status(400).json({errors: [{msg: "Invalid credentials."}]})

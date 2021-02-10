@@ -12,6 +12,7 @@ const User = require('../../models/User')
 // @access  Private
 router.get('/me', auth, async (req, res) => {
     try {
+        //get current user's profile without password
         const profile = await Profile.findOne({user: req.user.id}).populate('user', ['email', 'name', 'avatar'])
         if(!profile) {
             return res.status(400).json({errors: [{msg: "Profile doesn't exist."}]})
@@ -43,8 +44,8 @@ router.post('/', [auth, [
         const profileFields = {}
         profileFields.user = req.user.id
         profileFields.position = position
-        profileFields.skills = skills.split(',').map(skill => skill.trim())
-        //check if optional fields were sent from client side and add them to the profileFields object
+        profileFields.skills = skills.split(',').map(skill => skill.trim()) //change skills from a comma separated string to an array and remove any whitespaces from each skill
+        //check if optional fields were sent from client side through req.body and add them to the profileFields object
         if(organization) profileFields.organization = organization
         if(website) profileFields.website = website
         if(location) profileFields.location = location
@@ -144,6 +145,7 @@ async (req, res) => {
 
     const { title, organization, location, from, to, current, description } = req.body
 
+    //create new experience object
     const newExp = {
         title: title,
         organization: organization,
@@ -156,6 +158,7 @@ async (req, res) => {
 
     try {
         const profile = await Profile.findOne({user: req.user.id})
+        //add new experience object to the experience array
         profile.experience.unshift(newExp)
         await profile.save()
         res.json(profile)
@@ -171,8 +174,9 @@ async (req, res) => {
 router.delete('/experience/:exp_id', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({user: req.user.id})
-        //remove experience
+        //create a new array of only experience IDs and then get the index of the ID of the experience to delete
         const removeIndex = profile.experience.map(exp => exp.id).indexOf(req.params.exp_id)
+        //remove the experience from the experience array at that same index
         profile.experience.splice(removeIndex, 1)
         await profile.save()
         res.json(profile)
@@ -199,6 +203,7 @@ async (req, res) => {
 
     const { institution, degree, fieldOfStudy, from, to, current, description } = req.body
 
+    //create new education object
     const newEdu = {
         institution: institution,
         degree: degree,
@@ -211,6 +216,7 @@ async (req, res) => {
 
     try {
         const profile = await Profile.findOne({user: req.user.id})
+        //add new education object to the education array
         profile.education.unshift(newEdu)
         await profile.save()
         res.json(profile)
@@ -226,8 +232,9 @@ async (req, res) => {
 router.delete('/education/:edu_id', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({user: req.user.id})
-        //remove education
+        //create a new array of only education IDs and then get the index of the ID of the education to delete
         const removeIndex = profile.education.map(edu => edu.id).indexOf(req.params.edu_id)
+        //remove the education from the education array at that same index
         profile.education.splice(removeIndex, 1)
         await profile.save()
         res.json(profile)
@@ -238,7 +245,7 @@ router.delete('/education/:edu_id', auth, async (req, res) => {
 })
 
 // @route   GET api/profile/github/:username
-// @desc    Get user's repositories from GitHub
+// @desc    Make API Call to github and fetch user's repositories
 // @access  Public
 router.get('/github/:username', async (req, res) => {
     try {

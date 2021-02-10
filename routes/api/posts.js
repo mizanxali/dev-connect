@@ -17,6 +17,7 @@ router.post('/', [auth, [
     }
 
     try {
+        //get current user object to extract name and gravatar
         const user = await User.findById(req.user.id).select('-password')
 
         const { text } = req.body
@@ -29,7 +30,6 @@ router.post('/', [auth, [
         })
 
         const newPost = await post.save()
-
         res.json(newPost)
     } catch(err) {
         console.error(err.message)
@@ -42,6 +42,7 @@ router.post('/', [auth, [
 // @access  Private
 router.get('/', auth, async (req, res) => {
     try {
+        //get all posts sorted from latest to oldest
         const posts = await Post.find().sort({date: -1})
         res.json(posts)
     } catch(err) {
@@ -79,7 +80,7 @@ router.delete('/:post_id', auth, async (req, res) => {
             return res.status(404).json({errors: [{msg: "Post doesn't exist."}]})
         }
 
-        //check if user is deleting his own profile
+        //check if user is deleting his own post
         if(post.user.toString() !== req.user.id) {
             return res.status(401).json({errors: [{msg: "Not authorized to do that."}]})
         }
@@ -126,7 +127,6 @@ router.put('/:post_id/likes', auth, async (req, res) => {
 router.put('/:post_id/unlike', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.post_id)
-
         if(!post) {
             return res.status(404).json({errors: [{msg: "Post doesn't exist."}]})
         }
@@ -136,7 +136,9 @@ router.put('/:post_id/unlike', auth, async (req, res) => {
             return res.status(400).json({msg: "Post not liked yet."})
         }
 
+        //create a new array of only likes' user IDs and then get the index of the ID of the user of the like to delete
         const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id)
+        //remove the like from the likes array at that same index
         post.likes.splice(removeIndex, 1)
         await post.save()
         res.json(post.likes)
@@ -163,6 +165,7 @@ router.post('/:post_id/comments', [auth, [
             return res.status(404).json({errors: [{msg: "Post doesn't exist."}]})
         }
 
+        //get current user object to extract name and gravatar
         const user = await User.findById(req.user.id).select('-password')
 
         const { text } = req.body
@@ -203,7 +206,9 @@ router.delete('/:post_id/comments/:comment_id', auth, async (req, res) => {
             return res.status(401).json({errors: [{msg: "Not authorized to do that."}]})
         }
 
+        //create a new array of only comments' user IDs and then get the index of the ID of the user of the comment to delete
         const removeIndex = post.comments.map(comment => comment.user.toString()).indexOf(req.user.id)
+        //remove the comment from the comments array at that same index
         post.comments.splice(removeIndex, 1)
 
         await post.save()

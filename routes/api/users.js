@@ -25,7 +25,7 @@ router.post('/',
     const {name, email, password} = req.body
 
     try {
-        //check if user already exists and return with error code 400 if it does
+        //check if user already exists, if not continue
         let user = await User.findOne({email: email})
         if(user) {
             return res.status(400).json({errors: [{msg: "User already exists."}]})
@@ -33,6 +33,7 @@ router.post('/',
 
         //get users gravatar
         const avatar = gravatar.url(email, {
+            //some gravatar configuration
             size: '200',
             rating: 'PG',
             default: 'mm'
@@ -46,11 +47,12 @@ router.post('/',
             avatar: avatar
         })
 
-        //encrypt password
+        //encrypt password using bcrypt
         const salt = await bcrypt.genSalt(10)
-        user.password = await bcrypt.hash(password, salt) //update password in the user object to the hashed one
+        //update password in the user object to the hashed one
+        user.password = await bcrypt.hash(password, salt)
 
-        //finally, save user to database
+        //save user to database
         await user.save()
 
         //return JWT to client
