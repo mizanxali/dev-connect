@@ -1,7 +1,10 @@
 import React, { useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { showAlert } from '../../actions/alert'
+import PropTypes from 'prop-types'
 
-const Register = () => {
+const Register = (props) => {
     const nameRef = useRef(null)
     const emailRef= useRef(null)
     const passwordRef = useRef(null)
@@ -11,7 +14,7 @@ const Register = () => {
         event.preventDefault()
         //check if passwords match
         if(passwordRef.current.value !== password2Ref.current.value) {
-            console.log("passwords dont match")
+            props.showAlert('Passwords do not match.', 'danger')
         }
         else {
             console.log("success")
@@ -62,4 +65,12 @@ const Register = () => {
     )
 }
 
-export default Register
+Register.propTypes = {
+    showAlert: PropTypes.func.isRequired
+}
+
+const mapDispatchToProps = {
+    showAlert: showAlert
+}
+
+export default connect(null, mapDispatchToProps)(Register)
