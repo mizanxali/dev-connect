@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { showAlert } from '../../actions/alert'
 import PropTypes from 'prop-types'
+import { registerUser } from '../../actions/auth'
 
 const Register = (props) => {
     const nameRef = useRef(null)
@@ -17,7 +18,11 @@ const Register = (props) => {
             props.showAlert('Passwords do not match.', 'danger')
         }
         else {
-            console.log("success")
+            props.registerUser({
+                name: nameRef.current.value,
+                email: emailRef.current.value,
+                password: passwordRef.current.value
+            })
         }
     }
 
@@ -66,11 +71,13 @@ const Register = (props) => {
 }
 
 Register.propTypes = {
-    showAlert: PropTypes.func.isRequired
+    showAlert: PropTypes.func.isRequired,
+    registerUser: PropTypes.func.isRequired
 }
 
 const mapDispatchToProps = {
-    showAlert: showAlert
+    showAlert: showAlert,
+    registerUser: registerUser
 }
 
 export default connect(null, mapDispatchToProps)(Register)
