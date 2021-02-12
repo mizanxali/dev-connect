@@ -6,14 +6,17 @@ import Register from './components/auth/Register'
 import Alert from './components/layout/Alert'
 import Landing from './components/layout/Landing'
 import Navbar from './components/layout/Navbar'
+import Dashboard from './components/dashboard/Dashboard'
 import setAuthToken from './utils/setAuthToken'
 import store from './store'
 import { loadUser } from './actions/auth'
 import axios from 'axios'
+import CreateProfile from './components/profile-form/CreateProfile'
 
 if(localStorage.token) {
   setAuthToken(localStorage.token)
 }
+
 const App = () => {
 
   //runs once when component is mounted
@@ -30,6 +33,8 @@ const App = () => {
         <Switch>
           <Route path='/register' exact component={Register} />
           <Route path='/login' exact component={Login} />
+          <Route path='/dashboard' exact component={Dashboard} />
+          <Route path='/create-profile' exact component={CreateProfile} />
         </Switch>
       </section>
     </div>
