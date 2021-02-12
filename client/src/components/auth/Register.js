@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { showAlert } from '../../actions/alert'
 import PropTypes from 'prop-types'
@@ -25,6 +25,11 @@ const Register = (props) => {
             })
         }
     }
+
+        //redirect if logged in
+        if(props.isAuthenticated) {
+            return <Redirect to='/dashboard' />
+        }
 
     return (
         <div>
@@ -71,8 +76,15 @@ const Register = (props) => {
 }
 
 Register.propTypes = {
+    isAuthenticated: PropTypes.bool,
     showAlert: PropTypes.func.isRequired,
     registerUser: PropTypes.func.isRequired
+}
+
+const mapStateToProps = (state) => {
+    return {
+        isAuthenticated: state.auth.isAuthenticated
+    }
 }
 
 const mapDispatchToProps = {
@@ -80,4 +92,4 @@ const mapDispatchToProps = {
     registerUser: registerUser
 }
 
-export default connect(null, mapDispatchToProps)(Register)
+export default connect(mapStateToProps, mapDispatchToProps)(Register)
