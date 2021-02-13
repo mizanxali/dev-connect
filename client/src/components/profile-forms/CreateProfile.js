@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Redirect, withRouter } from 'react-router-dom'
+import { Link, Redirect, withRouter } from 'react-router-dom'
 import { setProfile } from '../../actions/profile'
 import { showAlert } from '../../actions/alert'
 
@@ -137,7 +137,7 @@ const CreateProfile = props => {
                 </>}
 
                 <input type="submit" className="btn btn-primary my-1" />
-                <a className="btn btn-light my-1" href="dashboard.html">Go Back</a>
+                <Link className="btn btn-light my-1" to="/dashboard">Go Back</Link>
             </form>
         </>
     )

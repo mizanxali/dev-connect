@@ -11,7 +11,8 @@ import setAuthToken from './utils/setAuthToken'
 import store from './store'
 import { loadUser } from './actions/auth'
 import axios from 'axios'
-import CreateProfile from './components/profile-form/CreateProfile'
+import CreateProfile from './components/profile-forms/CreateProfile'
+import EditProfile from './components/profile-forms/EditProfile'
 
 if(localStorage.token) {
   setAuthToken(localStorage.token)
@@ -35,6 +36,7 @@ const App = () => {
           <Route path='/login' exact component={Login} />
           <Route path='/dashboard' exact component={Dashboard} />
           <Route path='/create-profile' exact component={CreateProfile} />
+          <Route path='/edit-profile' exact component={EditProfile} />
         </Switch>
       </section>
     </div>

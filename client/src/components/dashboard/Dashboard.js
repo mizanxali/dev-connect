@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
 import { getCurrentProfile } from '../../actions/profile'
 import Spinner from '../layout/Spinner'
+import DashboardActions from './DashboardActions'
 
 const Dashboard = props => {
 
@@ -21,7 +22,7 @@ const Dashboard = props => {
         props.profile.loading && props.profile.profile===null ? <Spinner /> : <>
             <h1 className='large text-primary'>Dashboard</h1>
             <p className='lead'><i className='fas fa-user'></i> Welcome {props.auth.user && props.auth.user.name}</p>
-            {props.profile.profile!==null ? <>Has</> : <>
+            {props.profile.profile!==null ? <><DashboardActions /></> : <>
                 <p>You have not created a profile yet.</p>
                 <Link to='/create-profile' className='btn btn-primary my-1'>Create one now.</Link>
             </>}

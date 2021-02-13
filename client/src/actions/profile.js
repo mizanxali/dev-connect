@@ -24,13 +24,8 @@ export const setProfile = (formData, history, edit=false) => async dispatch => {
     try {
         const res = await axios.post('/api/profile', body, config)
         dispatch({type: GET_PROFILE, payload: res.data})
-
         dispatch(showAlert(edit ? 'Profile updated.' : 'Profile created', 'success'))
-
-        // if(!edit) {
-            history.push('/dashboard')
-        // }
-
+        history.push('/dashboard')
     } catch(err) {
         const errors = err.response.data.errors
 
