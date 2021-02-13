@@ -40,7 +40,7 @@ const EditProfile = props => {
             website: websiteRef.current.value,
             location: locationRef.current.value,
             skills: skillsRef.current.value,
-            githubUsernameRef: githubUsernameRef.current.value,
+            githubUsername: githubUsernameRef.current.value,
             bio: bioRef.current.value,
             twitter: twitterRef.current.value,
             facebook: facebookRef.current.value,

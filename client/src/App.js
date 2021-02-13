@@ -13,6 +13,8 @@ import { loadUser } from './actions/auth'
 import axios from 'axios'
 import CreateProfile from './components/profile-forms/CreateProfile'
 import EditProfile from './components/profile-forms/EditProfile'
+import AddExperience from './components/profile-forms/AddExperience'
+import AddEducation from './components/profile-forms/AddEducation'
 
 if(localStorage.token) {
   setAuthToken(localStorage.token)
@@ -37,6 +39,8 @@ const App = () => {
           <Route path='/dashboard' exact component={Dashboard} />
           <Route path='/create-profile' exact component={CreateProfile} />
           <Route path='/edit-profile' exact component={EditProfile} />
+          <Route path='/add-experience' exact component={AddExperience} />
+          <Route path='/add-education' exact component={AddEducation} />
         </Switch>
       </section>
     </div>
