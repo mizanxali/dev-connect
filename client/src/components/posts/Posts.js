@@ -27,7 +27,7 @@ const Posts = props => {
 
             <div className="posts">
                 {props.post.posts.map((post) => {
-                    return <PostItem key={post._id} post={post} />
+                    return <PostItem key={post._id} post={post} showActions={true} />
                 })}
             </div>
         </>
