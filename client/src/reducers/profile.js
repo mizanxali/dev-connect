@@ -1,4 +1,4 @@
-import { CLEAR_PROFILE, GET_PROFILE, PROFILE_ERROR, UPDATE_PROFILE } from "../actions/types"
+import { CLEAR_PROFILE, GET_GITHUB_REPOS, GET_PROFILE, GET_PROFILES, PROFILE_ERROR, UPDATE_PROFILE } from "../actions/types"
 
 const initialState = {
     profile: null,
@@ -15,6 +15,17 @@ export default function(state = initialState, action) {
                 ...state,
                 profile: action.payload,
                 loading: false
+            }
+        case GET_PROFILES:
+            return {
+                ...state,
+                profiles: action.payload,
+                loading: false
+            }
+        case GET_GITHUB_REPOS:
+            return {
+                ...state,
+                repos: action.payload
             }
         case PROFILE_ERROR:
             return {
