@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 const config = require('config')
+const normalizeUrl = require('normalize-url')
 const auth = require('../../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const Profile = require('../../models/Profile')
@@ -48,17 +49,17 @@ router.post('/', [auth, [
         profileFields.skills = skills.split(',').map(skill => skill.trim()) //change skills from a comma separated string to an array and remove any whitespaces from each skill
         //check if optional fields were sent from client side through req.body and add them to the profileFields object
         if(organization) profileFields.organization = organization
-        if(website) profileFields.website = website
+        if(website) profileFields.website = normalizeUrl(website, { forceHttps: true })
         if(location) profileFields.location = location
         if(bio) profileFields.bio = bio
         if(githubUsername) profileFields.githubUsername = githubUsername
         //create a nested social object
         profileFields.social = {}
-        if(youtube) profileFields.social.youtube = youtube
-        if(twitter) profileFields.social.twitter = twitter
-        if(instagram) profileFields.social.instagram = instagram
-        if(linkedin) profileFields.social.linkedin = linkedin
-        if(facebook) profileFields.social.facebook = facebook
+        if(youtube) profileFields.social.youtube = normalizeUrl(youtube, { forceHttps: true })
+        if(twitter) profileFields.social.twitter = normalizeUrl(twitter, { forceHttps: true })
+        if(instagram) profileFields.social.instagram = normalizeUrl(instagram, { forceHttps: true })
+        if(linkedin) profileFields.social.linkedin = normalizeUrl(linkedin, { forceHttps: true })
+        if(facebook) profileFields.social.facebook = normalizeUrl(facebook, { forceHttps: true })
 
         try {
             //check if profile already exists
