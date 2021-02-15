@@ -109,7 +109,7 @@ router.put('/:post_id/likes', auth, async (req, res) => {
 
         //check if user has already liked the post
         if(post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
-            return res.status(400).json({msg: "Post already liked."})
+            return res.status(400).json({errors: [{msg: "Post already liked."}]})
         }
 
         post.likes.unshift({user: req.user.id})
@@ -133,7 +133,7 @@ router.put('/:post_id/unlike', auth, async (req, res) => {
 
         //check if user has already liked the post
         if(post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
-            return res.status(400).json({msg: "Post not liked yet."})
+            return res.status(400).json({errors: [{msg: "Post not liked yet."}]})
         }
 
         //create a new array of only likes' user IDs and then get the index of the ID of the user of the like to delete
