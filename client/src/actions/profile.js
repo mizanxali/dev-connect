@@ -1,6 +1,6 @@
 import axios from 'axios'
 import  {showAlert } from './alert'
-import { GET_PROFILE, PROFILE_ERROR, UPDATE_PROFILE } from './types'
+import { CLEAR_PROFILE, ACCOUNT_DELETED, GET_PROFILE, PROFILE_ERROR, UPDATE_PROFILE } from './types'
 
 //get current user's profile
 export const getCurrentProfile = () => async dispatch => {
@@ -84,5 +84,43 @@ export const addEducation = (formData, history) => async dispatch => {
         }
 
         dispatch({type: PROFILE_ERROR, payload: {msg: err.response.statusText, status: err.response.status}})
+    }
+}
+
+//delete experience
+export const deleteExperience = (exp_id) => async dispatch => {
+    try {
+        const res = await axios.delete(`/api/profile/experience/${exp_id}`)
+        dispatch({type: UPDATE_PROFILE, payload: res.data})
+        dispatch(showAlert('Experience removed.', 'success'))
+
+    } catch(err) {
+        dispatch({type: PROFILE_ERROR, payload: {msg: err.response.statusText, status: err.response.status}})
+    }
+}
+
+//delete education
+export const deleteEducation = (edu_id) => async dispatch => {
+    try {
+        const res = await axios.delete(`/api/profile/education/${edu_id}`)
+        dispatch({type: UPDATE_PROFILE, payload: res.data})
+        dispatch(showAlert('Education removed.', 'success'))
+
+    } catch(err) {
+        dispatch({type: PROFILE_ERROR, payload: {msg: err.response.statusText, status: err.response.status}})
+    }
+}
+
+//delete account
+export const deleteAccount = () => async dispatch => {
+    if(window.confirm('Are you sure you want to delete your account?')) {
+        try {
+            const res = await axios.delete('/api/profile/')
+            dispatch({type: CLEAR_PROFILE, payload: res.data})
+            dispatch({type: ACCOUNT_DELETED, payload: res.data})
+            dispatch(showAlert('Your account has been permanently deleted.', 'success'))
+        } catch(err) {
+            dispatch({type: PROFILE_ERROR, payload: {msg: err.response.statusText, status: err.response.status}})
+        }
     }
 }
