@@ -10,7 +10,7 @@ const ProfileItem = props => {
             <h2>{props.profile.user.name}</h2>
             <p>{props.profile.position} {props.profile.organization && <span> at {props.profile.organization}</span>}</p>
             <p>{props.profile.location && <span>{props.profile.location}</span>}</p>
-            <Link to={`/profile/user/${props.profile.user._id}`} className="btn btn-primary">View Profile</Link>
+            <Link to={`/profile/${props.profile.user._id}`} className="btn btn-primary">View Profile</Link>
           </div>
 
           <ul>

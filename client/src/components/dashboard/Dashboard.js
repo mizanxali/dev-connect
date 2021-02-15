@@ -26,7 +26,7 @@ const Dashboard = props => {
             <p className='lead'><i className='fas fa-user'></i> Welcome {props.auth.user && props.auth.user.name}</p>
             {props.profile.profile!==null ?
             <>
-                <DashboardActions />
+                <DashboardActions id={props.auth.user._id} />
                 <Experience experiences={props.profile.profile.experience} />
                 <Education educations={props.profile.profile.education} />
             </>
